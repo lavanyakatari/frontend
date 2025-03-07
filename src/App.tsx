@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
+import "./App.css";
 
 interface Task {
   _id: string;
@@ -22,7 +23,7 @@ function App() {
   const handleAddTask = () => {
     if (newTask.trim() !== "") {
       axios
-        .post("http://localhost:5000/tasks", { text: newTask })
+        .post("http://localhost:3000/tasks", { text: newTask })
         .then((response) => {
           setTasks([...tasks, response.data]);
           setNewTask("");
@@ -35,7 +36,7 @@ function App() {
     const task = tasks.find((t) => t._id === id);
     if (task) {
       axios
-        .put(`http://localhost:5000/tasks/${id}`, {
+        .put(`http://localhost:3000/tasks/${id}`, {
           completed: !task.completed,
         })
         .then((response) => {
@@ -46,47 +47,55 @@ function App() {
 
   // Delete task
   const handleDeleteTask = (id: string) => {
-    axios.delete(`http://localhost:5000/tasks/${id}`).then(() => {
+    axios.delete(`http://localhost:3000/tasks/${id}`).then(() => {
       setTasks(tasks.filter((t) => t._id !== id));
     });
   };
 
   return (
-    <div className="flex justify-center items-center h-screen bg-red-500">
-      <div className="bg-white p-6 rounded-lg shadow-md w-1/2">
-        <h1 className="text-2xl font-bold mb-4">Todo List</h1>
-        <input
-          type="text"
-          value={newTask}
-          onChange={(e) => setNewTask(e.target.value)}
-          className="border border-gray-300 rounded-md p-2 mb-4"
-        />
-        <button
-          onClick={handleAddTask}
-          className="bg-blue-500 text-white px-4 py-2 rounded-md"
-        >
-          Add Task
-        </button>
-        <ul className="list-none">
+    <div className="flex flex-col items-center bg-gradient-to-r from-fuchsia-50 to-violet-200 w-screen h-screen p-4">
+      <div className="flex flex-col items-center bg-gradient-to-r from-cyan-700 to-emerald-300  h-screen p-4 border-2 border-black rounded-md">
+        <h1 className="text-4xl font-bold text-white mb-6">Todo List</h1>
+        <div className="flex flex-row gap-2 mb-4">
+          <input
+            type="text"
+            value={newTask}
+            onChange={(e) => setNewTask(e.target.value)}
+            placeholder="Add a new task"
+            className="flex bg-white text-black rounded-md border-2 p-2 border-gray-300 shadow-md focus:outline-none focus:ring-2 focus:ring-indigo-400"
+          />
+          <button
+            onClick={handleAddTask}
+            className="bg-green-500 text-white rounded-md px-4 py-2 hover:bg-green-600 transition duration-300"
+          >
+            Add Task
+          </button>
+        </div>
+
+        <ul className="flex flex-col gap-2 items-start w-full max-w-sm">
           {tasks.map((task) => (
             <li
               key={task._id}
-              className="flex justify-between items-center p-2 border-b border-gray-200"
+              className="flex flex-row gap-2 items-center justify-between w-full bg-white p-3 rounded-md shadow-md"
             >
-              <input
-                type="checkbox"
-                checked={task.completed}
-                onChange={() => handleToggleTask(task._id)}
-                className="mr-2"
-              />
-              <span
-                className={task.completed ? "text-green-500" : "text-gray-500"}
-              >
-                {task.text}
-              </span>
+              <div className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  checked={task.completed}
+                  onChange={() => handleToggleTask(task._id)}
+                  className="form-checkbox h-5 w-5 text-indigo-600"
+                />
+                <span
+                  className={`text-lg ${
+                    task.completed ? "line-through text-gray-500" : "text-black"
+                  }`}
+                >
+                  {task.text}
+                </span>
+              </div>
               <button
                 onClick={() => handleDeleteTask(task._id)}
-                className="bg-red-500 text-white px-2 py-1 rounded-md"
+                className="bg-red-500 text-white rounded-md px-3 py-1 hover:bg-red-600 transition duration-300"
               >
                 Delete
               </button>
